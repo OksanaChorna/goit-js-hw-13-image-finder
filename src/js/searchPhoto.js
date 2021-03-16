@@ -49,18 +49,19 @@ function appendPhotoMarkup(hits) {
 //   // });
 // };
 
-// const openLargeImg = largeImageURL => {
-//   const instance = basicLightbox.create(`
-//     <img src="${largeImageURL}" width="800" height="600">
-// `);
-//   instance.show();
-// };
+const openLargeImg = largeImageURL => {
+  const instance = basicLightbox.create(`
+    <img src="${largeImageURL}" width="800" height="600">
+`);
+  instance.show();
+};
 
-// gallery.addEventListener('click', event => {
-//   const { source } = event.target.dataset;
-//   if (!source) return;
-//   openLargeImg(source);
-// });
+gallery.addEventListener('click', event => {
+  const { source } = event.target.dataset;
+  console.log(source);
+  if (!source) return;
+  openLargeImg(source);
+});
 
 const loadMore = () => {
   apiService.incrementPage();
