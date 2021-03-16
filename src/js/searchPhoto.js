@@ -4,7 +4,7 @@ import { searchForm, gallery, btnLoadMore } from './refs';
 import * as basicLightbox from 'basiclightbox';
 import 'basiclightbox/dist/basicLightbox.min.css';
 import ApiService from './apiService';
-const { defaults, alert } = require('@pnotify/core');
+const { defaults, alert, error } = require('@pnotify/core');
 defaults.width = '400px';
 
 const apiService = new ApiService();
@@ -15,15 +15,16 @@ const renderPhoto = e => {
   gallery.innerHTML = '';
   //   const searchquery = e.currentTarget.elements.query.value;
   apiService.query = e.target.value;
-  if (apiService.query === ' ') {
+  if (apiService.query.trim() === '') {
     // ToDo чи треба trim????
     return alert({
       text: 'Please try again',
+      delay: 3000,
     });
   }
   apiService.resetPage();
 
-  apiService.getPhoto().then(appendPhotoMarkup);
+  apiService.getPhoto().then(appendPhotoMarkup).catch(onFetchError);
 };
 
 searchForm.addEventListener('input', debounce(renderPhoto, 300));
@@ -32,27 +33,13 @@ function appendPhotoMarkup(hits) {
   const markup = cardImg(hits);
   gallery.insertAdjacentHTML('beforeend', markup);
 }
-// function search(searchquery) {
-//   photoApi
-//     .getPhoto(searchquery, pageNumber)
-//     .then(data => {
-//       gallery.innerHTML = '';
-//       const { hits } = data;
-//       const markup = cardImg(hits);
-//       gallery.innerHTML = markup;
-//     })
-//     .catch(onFetchError);
-// }
 
-// const onFetchError = error => {
-//   console.log(error);
-//   // const { status, statusText } = error;
-//   // console.error(`Error with status code: ${status}. Message: ${statusText}`);
-//   // error({
-//   //   text: error, // ToDo
-//   //   delay: 3000,
-//   // });
-// };
+const onFetchError = errorMessage => {
+  error({
+    text: errorMessage,
+    delay: 3000,
+  });
+};
 
 const openLargeImg = largeImageURL => {
   const instance = basicLightbox.create(`
@@ -69,11 +56,17 @@ gallery.addEventListener('click', event => {
 });
 
 const loadMore = () => {
+  let windowHeight = document.documentElement.clientHeight;
+  console.log(windowHeight);
+  let windowWidth = document.documentElement.clientWidth;
+  console.log(windowWidth);
+
   apiService.incrementPage();
-  apiService.getPhoto().then(appendPhotoMarkup);
+  apiService.getPhoto().then(appendPhotoMarkup).catch(onFetchError);
+
   window.scrollTo({
-    top: 100,
-    left: 100,
+    top: windowHeight,
+    left: windowWidth,
     behavior: 'smooth',
   });
 };
