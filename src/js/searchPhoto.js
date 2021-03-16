@@ -8,18 +8,19 @@ const { defaults, alert, error } = require('@pnotify/core');
 defaults.width = '400px';
 
 const apiService = new ApiService();
-console.log(apiService);
 
 const renderPhoto = e => {
   e.preventDefault();
   gallery.innerHTML = '';
-  //   const searchquery = e.currentTarget.elements.query.value;
+
+  btnLoadMore.classList.remove('btn-hidden');
+
   apiService.query = e.target.value;
+
   if (apiService.query.trim() === '') {
-    // ToDo чи треба trim????
     return alert({
       text: 'Please try again',
-      delay: 3000,
+      delay: 2000,
     });
   }
   apiService.resetPage();
@@ -50,25 +51,25 @@ const openLargeImg = largeImageURL => {
 
 gallery.addEventListener('click', event => {
   const { source } = event.target.dataset;
-  console.log(source);
   if (!source) return;
   openLargeImg(source);
 });
 
 const loadMore = () => {
-  let windowHeight = document.documentElement.clientHeight;
-  console.log(windowHeight);
-  let windowWidth = document.documentElement.clientWidth;
-  console.log(windowWidth);
+  let windowHeight = gallery.clientHeight + 90;
 
   apiService.incrementPage();
-  apiService.getPhoto().then(appendPhotoMarkup).catch(onFetchError);
-
-  window.scrollTo({
-    top: windowHeight,
-    left: windowWidth,
-    behavior: 'smooth',
-  });
+  apiService
+    .getPhoto()
+    .then(appendPhotoMarkup)
+    .then(() => {
+      window.scrollTo({
+        top: windowHeight,
+        left: 0,
+        behavior: 'smooth',
+      });
+    })
+    .catch(onFetchError);
 };
 
 btnLoadMore.addEventListener('click', loadMore);

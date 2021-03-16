@@ -18,7 +18,6 @@ export default class ApiService {
         return result.json();
       })
       .then(({ hits }) => {
-        // this.incrementPage;
         return hits;
       });
   }
@@ -39,17 +38,3 @@ export default class ApiService {
     this.searchquery = newquery;
   }
 }
-
-// const photoApi = {
-//   getPhoto(searchquery, pageNumber) {
-//     return fetch(
-//       `${BASE_URL}?image_type=photo&orientation=horizontal&q=${searchquery}&page=${pageNumber}&per_page=12&key=${KEY}`,
-//     ).then(result => {
-//       if (!result.ok) {
-//         throw result;
-//       }
-//       return result.json();
-//     });
-//   },
-// };
-// export default photoApi;
