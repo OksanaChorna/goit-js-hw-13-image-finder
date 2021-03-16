@@ -1,11 +1,10 @@
 import { debounce } from 'lodash';
-// import lodash from 'lodash';
 import cardImg from '../templates/galary-img.hbs';
 import { searchForm, gallery, btnLoadMore } from './refs';
 import * as basicLightbox from 'basiclightbox';
 import 'basiclightbox/dist/basicLightbox.min.css';
 import ApiService from './apiService';
-const { defaults, error } = require('@pnotify/core');
+const { defaults, alert } = require('@pnotify/core');
 defaults.width = '400px';
 
 const apiService = new ApiService();
@@ -16,12 +15,18 @@ const renderPhoto = e => {
   gallery.innerHTML = '';
   //   const searchquery = e.currentTarget.elements.query.value;
   apiService.query = e.target.value;
+  if (apiService.query === ' ') {
+    // ToDo чи треба trim????
+    return alert({
+      text: 'Please try again',
+    });
+  }
   apiService.resetPage();
 
   apiService.getPhoto().then(appendPhotoMarkup);
 };
 
-searchForm.addEventListener('input', debounce(renderPhoto), 500); // ToDo розібратись із дебаунс
+searchForm.addEventListener('input', debounce(renderPhoto, 300));
 
 function appendPhotoMarkup(hits) {
   const markup = cardImg(hits);
@@ -66,6 +71,11 @@ gallery.addEventListener('click', event => {
 const loadMore = () => {
   apiService.incrementPage();
   apiService.getPhoto().then(appendPhotoMarkup);
+  window.scrollTo({
+    top: 100,
+    left: 100,
+    behavior: 'smooth',
+  });
 };
 
 btnLoadMore.addEventListener('click', loadMore);

@@ -8,7 +8,6 @@ export default class ApiService {
   }
 
   getPhoto() {
-    console.log(this);
     return fetch(
       `${BASE_URL}?image_type=photo&orientation=horizontal&q=${this.searchquery}&page=${this.page}&per_page=12&key=${KEY}`,
     )
@@ -18,9 +17,9 @@ export default class ApiService {
         }
         return result.json();
       })
-      .then(data => {
+      .then(({ hits }) => {
         // this.incrementPage;
-        return data.hits;
+        return hits;
       });
   }
 
