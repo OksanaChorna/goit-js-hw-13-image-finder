@@ -56,7 +56,7 @@ gallery.addEventListener('click', event => {
 });
 
 const loadMore = () => {
-  let windowHeight = gallery.clientHeight + 90;
+  let windowHeight = gallery.clientHeight + 95;
 
   apiService.incrementPage();
   apiService
